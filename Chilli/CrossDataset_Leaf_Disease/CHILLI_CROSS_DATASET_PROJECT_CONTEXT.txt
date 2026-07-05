@@ -1,0 +1,1827 @@
+PROJECT CONTEXT FOR OTHER LLMs
+============================================================
+Study: Cross-Dataset Generalization of Lightweight Deep Learning for
+Multi-Class Chilli Leaf Disease Classification
+
+Purpose of this file
+------------------------------------------------------------
+This file is a self-contained description of the current research idea,
+datasets, preprocessing, experiment design, models, proposed architecture,
+training protocol, statistical analysis, known limitations, and the exact
+logic that should be used when interpreting future results.
+
+It is written so that another LLM can understand the project without access
+to the original ChatGPT conversation.
+
+IMPORTANT:
+- Some experiments are planned or currently running.
+- Do not invent missing results.
+- Do not assume a model is superior until the recorded results are available.
+- The source of truth for final numerical results is the experiment output
+  directory, especially results/summary.csv, per-run metrics.json files,
+  predictions.csv files, and statistical-analysis outputs.
+
+
+============================================================
+1. WORKING TITLE
+============================================================
+
+Cross-Dataset Generalization of Lightweight Deep Learning for Multi-Class
+Chilli Leaf Disease Classification
+
+
+============================================================
+2. CENTRAL RESEARCH IDEA
+============================================================
+
+The main scientific problem is not simply to obtain high accuracy on one
+chilli leaf image dataset.
+
+The study investigates whether lightweight deep learning models generalize
+across independently collected public chilli leaf datasets that differ in
+acquisition conditions, background, camera, geography, class distribution,
+image quality, and dataset-specific characteristics.
+
+The central motivation is:
+
+    High within-dataset performance does not necessarily imply
+    cross-dataset robustness.
+
+Many plant-disease studies use random train/test splits from a single dataset.
+Such evaluation can overestimate practical robustness because training and
+test images may share the same visual style, acquisition process, background,
+camera characteristics, and data-collection biases.
+
+This work therefore emphasizes:
+
+1. within-dataset evaluation;
+2. bidirectional pairwise cross-dataset evaluation;
+3. multi-source training with a completely held-out target dataset;
+4. pooled multi-source evaluation as a secondary analysis;
+5. efficiency and model-size comparison;
+6. statistical significance and effect-size analysis.
+
+The paper should be framed primarily as a cross-dataset generalization study,
+not merely as another chilli-disease classification paper.
+
+
+============================================================
+3. MAIN RESEARCH QUESTIONS
+============================================================
+
+RQ1:
+How much performance drops when a model trained on one public chilli dataset
+is evaluated on another independently collected dataset?
+
+RQ2:
+Are lightweight architectures more or less robust to dataset shift than
+larger CNN and Transformer baselines?
+
+RQ3:
+Does multi-source training improve performance on a held-out target dataset?
+
+RQ4:
+Can a compact proposed model provide a favorable trade-off among:
+- cross-dataset Macro-F1;
+- MCC;
+- model parameter count;
+- computational cost;
+- memory use?
+
+RQ5:
+Are performance differences statistically significant and practically
+meaningful?
+
+RQ6:
+Is a model with slightly lower within-domain accuracy potentially more useful
+if it has a smaller cross-dataset generalization gap?
+
+
+============================================================
+4. PUBLIC DATASETS
+============================================================
+
+Three public chilli leaf datasets are used.
+
+Stable internal dataset IDs:
+
+A = dataset_A_bangladesh
+B = dataset_B_field8814
+C = dataset_C_cold_india
+
+------------------------------------------------------------
+4.1 Dataset A
+------------------------------------------------------------
+
+Public dataset:
+Chili Plant Leaf Disease and Growth Stage Dataset from Bangladesh
+
+DOI:
+10.17632/w9mr3vf56s.1
+
+Important points:
+- The repository contains original images and repository-provided augmented
+  images.
+- Only the original disease images should be used.
+- Repository-provided augmented copies are excluded from the benchmark.
+
+Relevant labels include:
+- Bacterial Spot
+- Cercospora Leaf Spot
+- Curl Virus
+- Healthy Leaves
+- Nutrition Deficiency
+- White Spot
+
+White Spot is not part of the six-class harmonized benchmark because it is not
+supported by the selected other datasets.
+
+After data-quality auditing, one observed current count matrix reported:
+
+A:
+- bacterial_spot: 147
+- cercospora_leaf_spot: 175
+- curl_virus: 423
+- healthy: 458
+- nutrient_deficiency: 444
+- powdery_mildew: 0
+
+Total A in that audited index: 1,647
+
+These values were produced after the fixed data pipeline excluded problematic
+exact duplicates and invalid files. If the data or pipeline changes, use the
+latest data/manifests/dataset_class_counts.csv as the source of truth.
+
+------------------------------------------------------------
+4.2 Dataset B
+------------------------------------------------------------
+
+Public dataset:
+Chilli Leaf Disease Image Dataset for Classification and Early Diagnosis in
+Agriculture
+
+DOI:
+10.17632/tm3v4zmh7c.1
+
+Relevant labels:
+- Bacterial Spot
+- Cercospora Leaf Spot
+- Curl Virus
+- Healthy Leaf
+- Nutrient Deficiency
+- Powdery Mildew
+
+After data-quality auditing, one observed current count matrix reported:
+
+B:
+- bacterial_spot: 1,280
+- cercospora_leaf_spot: 1,683
+- curl_virus: 1,582
+- healthy: 1,481
+- nutrient_deficiency: 1,067
+- powdery_mildew: 843
+
+Total B in that audited index: 7,936
+
+Again, use the latest manifest as final source of truth if anything changes.
+
+------------------------------------------------------------
+4.3 Dataset C
+------------------------------------------------------------
+
+Public dataset:
+COLD / chilli dataset
+
+DOI:
+10.17632/tf9dtfz9m6.2
+
+Associated public/peer-reviewed dataset work exists for this collection.
+
+Relevant class folders observed during diagnostics included variants such as:
+- healthy
+- nutritional
+- nutritional deficiency
+- powdery mildew
+- cercospora
+- cerocospora
+- mites_and_trips
+- murda complex
+- murda complex(mites,trips)
+
+Important decisions:
+- Only one selected raw-image representation is used.
+- Do not mix raw, cropped, cropped_resized, and other derived versions as
+  independent samples.
+- The current config selects the "resized raw images" representation.
+- A misspelled folder alias "cerocospora" must be explicitly mapped to
+  cercospora_leaf_spot.
+
+Dataset C initially had a broken extraction:
+- 13,983 image-extension files were found;
+- 13,842 were empty zero-byte files;
+- 141 were outside the selected include rule;
+- 0 usable images were found.
+
+The problem was traced to nested RAR extraction behavior. A repair workflow
+was created using clean temporary extraction and validation. After repair and
+alias correction, the pairwise and multi-source dry runs confirmed that
+Dataset C participates correctly.
+
+Final Dataset C class counts are not fixed in this context file because the
+latest count output was not explicitly provided in the conversation. Use:
+
+    data/manifests/dataset_class_counts.csv
+
+as the source of truth.
+
+Expected C support in the selected harmonized benchmark:
+- cercospora_leaf_spot
+- healthy
+- nutrient_deficiency
+- powdery_mildew
+
+
+============================================================
+5. SIX-CLASS HARMONIZED LABEL SPACE
+============================================================
+
+The global canonical label vocabulary is:
+
+1. bacterial_spot
+2. cercospora_leaf_spot
+3. curl_virus
+4. healthy
+5. nutrient_deficiency
+6. powdery_mildew
+
+Canonical set:
+
+Y = {
+    bacterial_spot,
+    cercospora_leaf_spot,
+    curl_virus,
+    healthy,
+    nutrient_deficiency,
+    powdery_mildew
+}
+
+Approximate dataset coverage:
+
+Class                     A     B     C
+------------------------------------------------
+bacterial_spot            yes   yes   no
+cercospora_leaf_spot      yes   yes   yes
+curl_virus                yes   yes   no
+healthy                   yes   yes   yes
+nutrient_deficiency       yes   yes   yes
+powdery_mildew            no    yes   yes
+
+Important biological caveat:
+- nutrient_deficiency is an abiotic disorder, not an infectious disease.
+- Therefore, the six-class task contains both biotic disease categories and
+  an abiotic deficiency category.
+- The manuscript should acknowledge this explicitly.
+- If necessary, describe the benchmark as leaf disease/condition recognition
+  or note the mixed biotic-abiotic composition.
+
+
+============================================================
+6. LABEL HARMONIZATION LOGIC
+============================================================
+
+The data pipeline scans full normalized relative image paths and maps folder
+name variants to canonical classes.
+
+Examples:
+
+bacterial_spot:
+- bacterial spot
+- bacterial leaf spot
+- bacterial
+
+cercospora_leaf_spot:
+- cercospora leaf spot
+- cercospora
+- cerocospora
+
+curl_virus:
+- curl virus
+- leaf curl virus
+- chilli leaf curl
+- chili leaf curl
+- leaf curl
+
+healthy:
+- healthy leaves
+- healthy leaf
+- healthy
+- fresh leaf
+
+nutrient_deficiency:
+- nutrient deficiency
+- nutrition deficiency
+- nutritional deficiency
+
+powdery_mildew:
+- powdery mildew
+
+Important:
+- The alias "cerocospora" is required because Dataset C contains this spelling.
+- Any future alias changes require rebuilding the index with:
+
+    python3 inspect_data.py --rebuild-index
+
+
+============================================================
+7. DATA QUALITY AUDIT AND LEAKAGE CONTROL
+============================================================
+
+The fixed data pipeline applies the following conservative process:
+
+1. recursively scan candidate image files;
+2. exclude repository-provided augmented paths;
+3. apply dataset-specific include/exclude path rules;
+4. reject zero-byte files;
+5. verify image readability with PIL;
+6. reject corrupt or unreadable files;
+7. infer canonical labels;
+8. compute SHA-256 hashes for valid images;
+9. detect exact duplicate image content;
+10. detect exact duplicates assigned to conflicting labels;
+11. exclude the entire conflicting hash group;
+12. reduce same-label exact duplicates within a dataset to one deterministic
+    representative;
+13. preserve exact duplicates across datasets as a shared group ID for pooled
+    group-aware CV;
+14. remove exact source-target overlap before external evaluation.
+
+Observed audit result:
+- 14 files from 5 exact-duplicate SHA-256 groups were excluded because
+  identical image content was associated with conflicting canonical labels.
+
+Important policy:
+- The code does not guess which conflicting label is correct.
+- It does not use majority vote.
+- It excludes the complete conflicting hash group conservatively.
+
+Current verified external dry runs reported:
+
+    exact_target_overlap_removed = 0
+
+for all tested pairwise and multi-source scenarios.
+
+Important limitation:
+- SHA-256 only detects byte-identical duplicates.
+- It does not detect:
+  - resized copies;
+  - cropped copies;
+  - recompressed JPEG copies;
+  - color-adjusted copies;
+  - near-duplicates.
+- A future near-duplicate audit using perceptual hashes or image embeddings
+  would strengthen the study.
+
+Audit outputs include:
+
+data/manifests/
+- training_index.csv
+- scan_log.csv
+- data_quality_summary.csv
+- conflicting_duplicate_labels.csv
+- removed_exact_duplicates.csv
+- dataset_class_counts.csv
+- dataset_class_matrix.csv
+
+
+============================================================
+8. EXPERIMENTAL DESIGN OVERVIEW
+============================================================
+
+Four main experiment families are implemented:
+
+1. within_cv
+2. pairwise
+3. multisource
+4. pooled_cv
+
+These experiments must not be interpreted as equivalent.
+
+------------------------------------------------------------
+8.1 Experiment Family 1: Within-Dataset 5-Fold CV
+------------------------------------------------------------
+
+Datasets evaluated separately:
+
+A -> A
+B -> B
+C -> C
+
+Protocol:
+- group-aware outer 5-fold CV;
+- inner validation split from the development portion;
+- early stopping uses validation Macro-F1;
+- outer test fold is not used for early stopping or model selection.
+
+Purpose:
+- estimate in-domain performance;
+- establish conventional baseline performance;
+- quantify within-domain variance.
+
+This is not external validation.
+
+------------------------------------------------------------
+8.2 Experiment Family 2: Bidirectional Pairwise Cross-Dataset
+------------------------------------------------------------
+
+For source S and target T, the active class space is:
+
+Y_(S->T) = Y_S intersection Y_T
+
+Confirmed dry-run structure:
+
+A -> B:
+5 classes
+- bacterial_spot
+- cercospora_leaf_spot
+- curl_virus
+- healthy
+- nutrient_deficiency
+
+B -> A:
+same 5 classes
+
+A -> C:
+3 classes
+- cercospora_leaf_spot
+- healthy
+- nutrient_deficiency
+
+C -> A:
+same 3 classes
+
+B -> C:
+4 classes
+- cercospora_leaf_spot
+- healthy
+- nutrient_deficiency
+- powdery_mildew
+
+C -> B:
+same 4 classes
+
+Compact notation:
+
+A^(5) -> B^(5)
+B^(5) -> A^(5)
+
+A^(3) -> C^(3)
+C^(3) -> A^(3)
+
+B^(4) -> C^(4)
+C^(4) -> B^(4)
+
+Purpose:
+- directly test unseen-dataset generalization;
+- test directionality/asymmetry of domain shift;
+- avoid pretending absent classes exist.
+
+Critical rule:
+- target data are not used for source-model hyperparameter tuning;
+- target data are not used for early stopping;
+- model selection is source-side only;
+- then the selected/frozen model is evaluated on the target.
+
+------------------------------------------------------------
+8.3 Experiment Family 3: Multi-Source Held-Out Target
+------------------------------------------------------------
+
+For source datasets S1...Sm and target T:
+
+Y_((S1+...+Sm)->T)
+=
+(union of source labels) intersection target labels
+
+Confirmed dry-run structure:
+
+A + C -> B:
+6 classes
+- bacterial_spot
+- cercospora_leaf_spot
+- curl_virus
+- healthy
+- nutrient_deficiency
+- powdery_mildew
+
+A + B -> C:
+4 classes
+- cercospora_leaf_spot
+- healthy
+- nutrient_deficiency
+- powdery_mildew
+
+B + C -> A:
+5 classes
+- bacterial_spot
+- cercospora_leaf_spot
+- curl_virus
+- healthy
+- nutrient_deficiency
+
+The headline multi-source experiment is:
+
+    A + C -> B
+
+because it evaluates all six harmonized classes on a fully held-out target
+dataset B.
+
+Purpose:
+- determine whether source-domain diversity improves generalization;
+- test a more realistic multi-source external evaluation.
+
+Important limitation: class-source confounding.
+
+For A+C -> B:
+
+Class                     Source A   Source C
+------------------------------------------------
+bacterial_spot            yes        no
+cercospora_leaf_spot      yes        yes
+curl_virus                yes        no
+healthy                   yes        yes
+nutrient_deficiency       yes        yes
+powdery_mildew            no         yes
+
+Therefore:
+- bacterial_spot source examples come only from A;
+- curl_virus source examples come only from A;
+- powdery_mildew source examples come only from C.
+
+This does not invalidate held-out testing on B, but it means source-domain
+identity and class identity are partially confounded for some classes.
+
+The manuscript should describe this honestly.
+
+------------------------------------------------------------
+8.4 Experiment Family 4: Pooled 5-Fold CV
+------------------------------------------------------------
+
+Data:
+
+A + B + C
+
+Protocol:
+- pooled group-aware 5-fold CV.
+
+Purpose:
+- secondary combined-data analysis;
+- evaluate performance when all source domains are mixed.
+
+Important:
+- pooled CV is NOT external cross-dataset validation.
+- It should be labeled as pooled multi-source classification or pooled CV.
+
+
+============================================================
+9. BASELINE MODELS
+============================================================
+
+Default baseline set:
+
+1. mobilenet_v2
+2. mobilenet_v3_small
+3. shufflenet_v2_x1_0
+4. efficientnet_b0
+5. resnet50
+6. densenet121
+7. swin_t
+
+Optional supported baseline:
+8. efficientnet_b4
+
+Rationale:
+
+MobileNetV2:
+- classical lightweight reference;
+- widely used in plant-disease and mobile vision studies.
+
+MobileNetV3-Small:
+- modern mobile architecture;
+- directly relevant to lightweight deployment.
+
+ShuffleNetV2:
+- ultra-light efficient architecture;
+- different efficiency philosophy from MobileNet.
+
+EfficientNet-B0:
+- strong accuracy-efficiency reference;
+- common plant-disease baseline.
+
+ResNet50:
+- canonical full-size residual CNN;
+- important control against lightweight methods.
+
+DenseNet121:
+- dense feature reuse;
+- architectural diversity.
+
+Swin-Tiny:
+- modern hierarchical Transformer reference.
+
+EfficientNet-B4:
+- optional stronger/heavier EfficientNet reference.
+
+All baseline models are defined separately in:
+
+    baseline_models.py
+
+They use torchvision implementations.
+
+
+============================================================
+10. PROPOSED LIGHTWEIGHT MODEL
+============================================================
+
+Working model name:
+
+    ChilliLite-GFNet
+
+Code name in configuration:
+
+    chilli_lite_gfnet
+
+Defined in:
+
+    proposed_model.py
+
+The proposed architecture is intentionally isolated from the baseline code so
+it can be modified repeatedly without changing the common training protocol.
+
+Current prototype design:
+
+1. MobileNetV3-Small convolutional feature extractor;
+2. three multi-scale feature taps;
+3. lightweight 1x1 projections;
+4. ECA-style channel recalibration;
+5. spatial alignment of feature maps;
+6. descriptor concatenation;
+7. adaptive softmax gates across scales;
+8. weighted multi-scale fusion;
+9. depthwise-separable refinement;
+10. global average pooling;
+11. dropout;
+12. final classifier.
+
+Current feature-tap configuration:
+
+tap_indices:
+- 3
+- 8
+- 12
+
+tap_channels:
+- 24
+- 48
+- 576
+
+projection_channels:
+- 96
+
+fusion_channels:
+- 160
+
+gate_hidden_channels:
+- 64
+
+dropout:
+- 0.20
+
+eca_kernel_size:
+- 3
+
+Conceptual equations:
+
+For feature tap i:
+
+B_i = ECA_i(
+        activation(
+          BN(
+            Conv1x1_i(F_i)
+          )
+        )
+      )
+
+Descriptors:
+
+z = concat(
+      GAP(B_1),
+      GAP(B_2),
+      GAP(B_3)
+    )
+
+Adaptive branch gates:
+
+alpha = softmax(
+          W_2 * sigma(W_1 * z)
+        )
+
+with:
+
+sum_i alpha_i = 1
+
+Fused representation:
+
+F_fuse = sum_i alpha_i * aligned(B_i)
+
+Then depthwise-separable refinement and classification are applied.
+
+Important:
+- The current architecture is a research prototype.
+- Do not automatically claim novelty only because components are combined.
+- Novelty must be supported by literature comparison and ablation studies.
+- The final proposed architecture may change.
+
+
+============================================================
+11. FAIR COMPARISON POLICY
+============================================================
+
+The core design principle is:
+
+    Baselines and the proposed model must differ only in architecture,
+    not in the experiment engine.
+
+Both families use the same:
+
+- data index;
+- class harmonization;
+- train/validation/test splits;
+- group-aware fold logic;
+- input resolution;
+- transforms;
+- normalization;
+- optimizer;
+- learning rate;
+- weight decay;
+- scheduler;
+- warm-up;
+- class weighting;
+- label smoothing;
+- early stopping;
+- AMP setting;
+- gradient clipping;
+- evaluation metrics;
+- duplicate protection.
+
+Baseline entry point:
+
+    run_baselines.py
+
+Proposed-model entry point:
+
+    run_proposed.py
+
+Shared training/evaluation engine:
+
+    train_engine.py
+
+Shared experiment definitions:
+
+    experiment_runner.py
+
+Shared data pipeline:
+
+    data_pipeline.py
+
+This separation is essential for fair comparison.
+
+
+============================================================
+12. PRETRAINING POLICY
+============================================================
+
+Current default:
+
+    pretrained = true
+
+Baseline models use official ImageNet pretrained torchvision weights.
+
+The proposed model uses a MobileNetV3-Small-derived feature extractor and
+therefore can use the same general pretrained initialization policy.
+
+Important:
+- Do not compare pretrained baselines against a non-pretrained proposed model
+  in the main table.
+- A from-scratch experiment can be done as a separate sensitivity analysis.
+
+
+============================================================
+13. CURRENT DEFAULT TRAINING SETTINGS
+============================================================
+
+Source of truth:
+
+    config.yaml
+
+Current approximately implemented settings:
+
+Input image size:
+    224 x 224
+
+Optimizer:
+    AdamW
+
+Initial learning rate:
+    3e-4
+
+Weight decay:
+    1e-4
+
+Betas:
+    [0.9, 0.999]
+
+Maximum epochs:
+    40
+
+Batch size:
+    32
+
+Scheduler:
+    cosine
+
+Warm-up:
+    3 epochs
+
+Minimum learning rate:
+    1e-6
+
+Loss:
+    cross-entropy
+
+Label smoothing:
+    0.10
+
+Class weighting:
+    balanced
+
+Early stopping monitor:
+    validation Macro-F1
+
+Early stopping mode:
+    maximize
+
+Patience:
+    8
+
+Minimum improvement:
+    0.0001
+
+AMP:
+    enabled on CUDA
+
+Gradient clipping norm:
+    1.0
+
+Runtime device:
+    auto
+
+Important:
+- Exact values must be read from the final config.yaml used for the experiment.
+- If batch size is changed because of GPU memory limitations, document the
+  policy explicitly.
+- Avoid silently changing training hyperparameters only for the proposed model.
+
+
+============================================================
+14. DATA AUGMENTATION AND NORMALIZATION
+============================================================
+
+Current training augmentation approximately includes:
+
+Random resized crop:
+    scale [0.80, 1.00]
+
+Horizontal flip:
+    p = 0.50
+
+Rotation:
+    +/- 10 degrees
+
+Color jitter:
+    brightness = 0.15
+    contrast = 0.15
+    saturation = 0.10
+    hue = 0.02
+
+Evaluation:
+- resize;
+- center crop;
+- no random augmentation.
+
+Normalization:
+- fixed ImageNet mean/std for all models.
+
+Repository-provided augmented images are excluded.
+
+
+============================================================
+15. METRICS
+============================================================
+
+Run-level metrics include:
+
+- Accuracy
+- Balanced Accuracy
+- Macro Precision
+- Macro Recall
+- Macro F1
+- Macro Specificity
+- MCC
+- Macro one-vs-rest AUC when computable
+- Loss
+
+Efficiency information includes:
+
+- total parameters
+- trainable parameters
+- elapsed seconds
+- peak GPU memory when CUDA is used
+- best epoch
+
+Primary robustness emphasis:
+
+1. Macro-F1
+2. MCC
+
+Accuracy is reported but should not be the only main metric.
+
+Why Macro-F1:
+- class distributions differ;
+- cross-dataset tasks use different class subsets;
+- macro averaging gives equal class importance.
+
+Why MCC:
+- robust single-score summary;
+- useful under class imbalance;
+- complements Macro-F1.
+
+
+============================================================
+16. PER-RUN OUTPUTS
+============================================================
+
+Each completed run should save:
+
+best_model.pt
+history.csv
+predictions.csv
+confusion_matrix.csv
+per_class_metrics.csv
+split_class_counts.csv
+metrics.json
+labels.json
+train_split.csv
+val_split.csv
+test_split.csv
+
+Uses:
+
+history.csv:
+- convergence plots;
+- train/validation loss;
+- train/validation Macro-F1;
+- overfitting analysis.
+
+predictions.csv:
+- per-image true label;
+- predicted label;
+- class probabilities;
+- ROC curves;
+- McNemar test;
+- paired bootstrap;
+- confidence/error analysis.
+
+confusion_matrix.csv:
+- raw and normalized confusion-matrix figures.
+
+per_class_metrics.csv:
+- support;
+- precision;
+- sensitivity/recall;
+- specificity;
+- F1;
+- one-vs-rest AUC;
+- TP/FP/FN/TN.
+
+split_class_counts.csv:
+- exact class counts for train/validation/test.
+
+metrics.json:
+- compact run-level metrics;
+- parameter counts;
+- runtime;
+- GPU memory;
+- best epoch;
+- metadata.
+
+split CSV files:
+- exact reproducibility of the data partition.
+
+Global summary:
+
+    results/summary.csv
+
+
+============================================================
+17. RANDOM SEEDS
+============================================================
+
+Development may use one seed:
+
+    [42]
+
+For final pairwise and multi-source statistical evaluation, recommended:
+
+    [42, 52, 62, 72, 82]
+
+Reason:
+- repeated stochastic training provides matched scenario-seed units;
+- improves the basis for statistical comparison.
+
+Important:
+- Within-dataset 5-fold CV and repeated external seeds answer different
+  questions.
+- Do not replace external repeated-seed testing merely by increasing from
+  5-fold to 10-fold CV.
+
+
+============================================================
+18. STATISTICAL ANALYSIS
+============================================================
+
+Implemented script:
+
+    statistical_analysis.py
+
+Planned evidence chain:
+
+1. descriptive statistics;
+2. Friedman omnibus test;
+3. pairwise Wilcoxon signed-rank post-hoc tests;
+4. Holm correction for multiple comparisons;
+5. rank-biserial effect size;
+6. exact McNemar test for proposed vs strongest baseline;
+7. paired bootstrap 95% confidence interval for metric differences.
+
+Significance level:
+
+    alpha = 0.05
+
+------------------------------------------------------------
+18.1 Matched statistical units
+------------------------------------------------------------
+
+Within-CV / pooled-CV:
+- matched by scenario + fold.
+
+Pairwise / multi-source:
+- matched by scenario + seed.
+
+This prevents arbitrary comparison of unrelated runs.
+
+------------------------------------------------------------
+18.2 Friedman test
+------------------------------------------------------------
+
+Purpose:
+- omnibus comparison across 3 or more models on matched units.
+
+Null hypothesis:
+- models have equivalent performance ranks.
+
+------------------------------------------------------------
+18.3 Pairwise Wilcoxon signed-rank
+------------------------------------------------------------
+
+Purpose:
+- paired non-parametric comparison between models.
+
+Examples:
+- Proposed vs MobileNetV2
+- Proposed vs MobileNetV3-Small
+- Proposed vs EfficientNet-B0
+- Proposed vs ResNet50
+- etc.
+
+------------------------------------------------------------
+18.4 Holm correction
+------------------------------------------------------------
+
+Purpose:
+- control family-wise error across multiple pairwise comparisons.
+
+Primary inferential claims should use:
+
+    Holm-adjusted p-values
+
+not only raw p-values.
+
+------------------------------------------------------------
+18.5 Rank-biserial effect size
+------------------------------------------------------------
+
+Purpose:
+- quantify practical magnitude of paired differences.
+
+Do not rely on p-values alone.
+
+------------------------------------------------------------
+18.6 Exact McNemar test
+------------------------------------------------------------
+
+Used for proposed model vs strongest baseline on the same test images.
+
+It analyzes discordant correctness:
+
+- proposed correct, baseline wrong;
+- proposed wrong, baseline correct.
+
+This is especially appropriate because predictions are paired image-by-image.
+
+------------------------------------------------------------
+18.7 Paired bootstrap
+------------------------------------------------------------
+
+Purpose:
+- estimate uncertainty for the difference:
+
+Delta M = M_proposed - M_baseline
+
+Potential metrics:
+- Accuracy
+- Balanced Accuracy
+- Macro-F1
+- MCC
+
+Recommended:
+- 2,000 or more bootstrap replicates for final reporting.
+
+Output:
+- observed metric difference;
+- bootstrap mean difference;
+- 95% CI.
+
+------------------------------------------------------------
+18.8 Statistical caution
+------------------------------------------------------------
+
+Do not say:
+"Five CV folds are five fully independent observations."
+
+CV folds are matched resampling units with overlapping training sets.
+
+A careful manuscript statement is:
+
+"Performance was summarized across matched cross-validation folds, while
+paired non-parametric procedures were used for model comparisons. External
+cross-dataset experiments were additionally repeated across multiple random
+seeds."
+
+
+============================================================
+19. GENERALIZATION GAP
+============================================================
+
+A high-level robustness summary is planned:
+
+Generalization gap:
+
+Delta_gen
+=
+MacroF1_within
+-
+MacroF1_cross
+
+Interpretation:
+- smaller gap may indicate better robustness to dataset shift.
+
+Important limitation:
+- pairwise cross-dataset tasks use different shared label spaces (5/3/4 classes).
+- Therefore, the global generalization-gap comparison is a high-level summary,
+  not always an identical-task comparison.
+
+
+============================================================
+20. MANUSCRIPT-READY TABLES
+============================================================
+
+Planned main tables:
+
+Table A:
+Audited dataset/class counts.
+
+Table B:
+Within-dataset 5-fold CV performance:
+- Accuracy
+- Macro-F1
+- MCC
+- AUC
+- mean +/- SD
+
+Table C:
+Bidirectional pairwise cross-dataset performance:
+- A->B
+- B->A
+- A->C
+- C->A
+- B->C
+- C->B
+
+Table D:
+Multi-source held-out-domain performance:
+- A+C->B
+- A+B->C
+- B+C->A
+
+Table E:
+Pooled A+B+C 5-fold CV.
+
+Table F:
+Efficiency:
+- parameters
+- trainable parameters
+- runtime
+- peak GPU memory
+- Macro-F1
+
+Table G:
+Statistical comparisons:
+- model pair
+- mean difference
+- raw Wilcoxon p
+- Holm p
+- rank-biserial effect size
+
+Table H:
+Per-class results for the proposed model and strongest baseline.
+
+Table I:
+Ablation study for the final proposed architecture.
+
+
+============================================================
+21. MANUSCRIPT-READY FIGURES
+============================================================
+
+Planned/implemented result figures:
+
+1. Pairwise cross-dataset Macro-F1 grouped bar chart.
+2. Multi-source Macro-F1 grouped bar chart.
+3. Directional transfer matrix.
+4. Accuracy-efficiency scatter plot.
+5. Training/validation loss curves.
+6. Training/validation Macro-F1 curves.
+7. Normalized confusion matrix.
+8. Per-class metric plot.
+9. One-vs-rest ROC curves.
+10. Average model rank plot.
+11. Generalization-gap plot.
+
+Notebook:
+
+    chilli_results_analysis.ipynb
+
+Output directories:
+
+    results/manuscript_figures/
+    results/manuscript_tables/
+
+
+============================================================
+22. HOW TO INTERPRET FUTURE RESULTS
+============================================================
+
+When future numerical results are provided, analyze them in the following
+order.
+
+------------------------------------------------------------
+22.1 First: verify experiment completeness
+------------------------------------------------------------
+
+Check:
+- all intended models completed the same scenarios;
+- paired comparisons use the same seeds/folds;
+- no model has missing scenarios;
+- class spaces match the protocol;
+- no accidental overwrite or missing run occurred.
+
+------------------------------------------------------------
+22.2 Second: separate within-domain and cross-domain conclusions
+------------------------------------------------------------
+
+Do not combine them into one vague ranking.
+
+A model can:
+- be strongest within-domain;
+- but weak under dataset shift.
+
+Another model can:
+- have slightly lower within-domain score;
+- but smaller cross-dataset degradation.
+
+These are scientifically different findings.
+
+------------------------------------------------------------
+22.3 Third: inspect transfer direction asymmetry
+------------------------------------------------------------
+
+Compare:
+
+A->B vs B->A
+A->C vs C->A
+B->C vs C->B
+
+A large difference indicates asymmetric domain shift.
+
+Possible explanations:
+- source sample diversity;
+- target image difficulty;
+- class balance;
+- acquisition conditions;
+- background complexity;
+- label consistency.
+
+Do not claim a cause without evidence; phrase causes as hypotheses or
+inferences unless metadata support them.
+
+------------------------------------------------------------
+22.4 Fourth: analyze the headline six-class experiment
+------------------------------------------------------------
+
+A+C->B is the main six-class held-out target scenario.
+
+Questions:
+- Does multi-source training improve over A->B?
+- Which classes improve?
+- Which classes remain weak?
+- Does the proposed model preserve its advantage?
+- Does class-source confounding appear to affect source-specific classes?
+
+Important:
+A+C->B is not a standard pairwise task; it is multi-source external
+evaluation.
+
+------------------------------------------------------------
+22.5 Fifth: examine per-class errors
+------------------------------------------------------------
+
+Use:
+- confusion matrices;
+- per_class_metrics.csv;
+- predictions.csv.
+
+Look for:
+- Cercospora vs bacterial confusion;
+- nutrient deficiency vs disease confusion;
+- healthy false positives;
+- powdery mildew transfer failures;
+- curl-virus domain sensitivity.
+
+Do not infer pathology explanations without visual/error evidence.
+
+------------------------------------------------------------
+22.6 Sixth: evaluate efficiency
+------------------------------------------------------------
+
+A lightweight model claim should not rely only on accuracy.
+
+Compare:
+- parameters;
+- Macro-F1;
+- MCC;
+- runtime;
+- GPU memory.
+
+A strong result may be:
+- similar Macro-F1 to a larger model;
+- much fewer parameters;
+- smaller memory use.
+
+------------------------------------------------------------
+22.7 Seventh: interpret statistics
+------------------------------------------------------------
+
+Preferred logic:
+
+1. Check Friedman omnibus p-value.
+2. If evidence of overall differences exists, inspect pairwise Wilcoxon tests.
+3. Use Holm-adjusted p-values.
+4. Report rank-biserial effect sizes.
+5. For proposed vs strongest baseline, inspect McNemar and bootstrap CI.
+6. Distinguish statistical significance from practical significance.
+
+------------------------------------------------------------
+22.8 Eighth: avoid overclaiming
+------------------------------------------------------------
+
+Do not claim:
+- universal SOTA;
+- pathogen-confirmed diagnosis;
+- real-world deployment readiness;
+- complete leakage elimination;
+- external validation when describing pooled CV.
+
+Use precise language:
+- "cross-dataset evaluation"
+- "held-out target dataset"
+- "multi-source external evaluation"
+- "exact duplicate audit"
+- "public-dataset benchmark"
+
+
+============================================================
+23. EXPECTED CONTRIBUTIONS
+============================================================
+
+Potential final contribution framing:
+
+Contribution 1:
+A harmonized multi-dataset chilli leaf benchmark constructed from three public
+datasets with explicit label mapping and data-quality auditing.
+
+Contribution 2:
+A bidirectional pairwise cross-dataset protocol covering 5-class, 3-class, and
+4-class shared label spaces.
+
+Contribution 3:
+A multi-source held-out-domain protocol including the six-class A+C->B
+experiment.
+
+Contribution 4:
+A broad comparison of lightweight CNNs, larger CNNs, a Transformer baseline,
+and a proposed compact architecture under one shared training/evaluation
+protocol.
+
+Contribution 5:
+A lightweight gated multi-scale fusion model (current working version:
+ChilliLite-GFNet), subject to final ablation and novelty validation.
+
+Contribution 6:
+A statistical evaluation framework using Friedman, Wilcoxon-Holm,
+rank-biserial effect sizes, McNemar testing, and paired bootstrap confidence
+intervals.
+
+Contribution 7:
+Transparent leakage/data-quality controls, including exclusion of exact
+conflicting duplicates and explicit source-target overlap checks.
+
+
+============================================================
+24. KNOWN LIMITATIONS
+============================================================
+
+1. Public labels may not be pathogen-confirmed.
+2. Nutrient deficiency is abiotic, not infectious.
+3. Dataset label taxonomies require harmonization.
+4. Class-source confounding exists in multi-source scenarios.
+5. SHA-256 detects exact duplicates only.
+6. Near-duplicates may remain.
+7. Cross-dataset label spaces differ across directions.
+8. CV folds are not fully independent datasets.
+9. Image classification does not localize lesions.
+10. Image classification does not measure disease severity.
+11. Dataset C required extraction repair; the final selected representation
+    must be documented carefully.
+12. A proposed model combination is not automatically novel without
+    literature support and ablation evidence.
+
+
+============================================================
+25. CURRENT SOFTWARE STRUCTURE
+============================================================
+
+Required files:
+
+README_RUN.md
+requirements.txt
+config.yaml
+
+extract_data_v2.py
+repair_dataset_c.py
+diagnose_dataset_c.py
+
+common.py
+data_pipeline.py
+baseline_models.py
+proposed_model.py
+train_engine.py
+experiment_runner.py
+inspect_data.py
+run_baselines.py
+run_proposed.py
+statistical_analysis.py
+
+chilli_results_analysis.ipynb
+
+Important roles:
+
+extract_data_v2.py:
+- organizes top-level downloads;
+- recursively extracts nested archives.
+
+repair_dataset_c.py:
+- repairs Dataset C RAR extraction safely.
+
+diagnose_dataset_c.py:
+- audits Dataset C extraction and labels.
+
+inspect_data.py:
+- rebuilds and prints harmonized counts/intersections.
+
+run_baselines.py:
+- baseline experiments.
+
+run_proposed.py:
+- proposed-model experiments.
+
+statistical_analysis.py:
+- statistical tests.
+
+chilli_results_analysis.ipynb:
+- manuscript tables and figures.
+
+
+============================================================
+26. CURRENT VERIFIED DRY-RUN OUTPUTS
+============================================================
+
+Pairwise baseline dry run confirmed:
+
+A->B:
+5 classes
+[bacterial_spot,
+ cercospora_leaf_spot,
+ curl_virus,
+ healthy,
+ nutrient_deficiency]
+
+B->A:
+same 5 classes
+
+A->C:
+3 classes
+[cercospora_leaf_spot,
+ healthy,
+ nutrient_deficiency]
+
+C->A:
+same 3 classes
+
+B->C:
+4 classes
+[cercospora_leaf_spot,
+ healthy,
+ nutrient_deficiency,
+ powdery_mildew]
+
+C->B:
+same 4 classes
+
+All reported:
+exact_target_overlap_removed = 0
+
+Multi-source baseline dry run confirmed:
+
+A+C->B:
+6 classes
+[bacterial_spot,
+ cercospora_leaf_spot,
+ curl_virus,
+ healthy,
+ nutrient_deficiency,
+ powdery_mildew]
+
+A+B->C:
+4 classes
+[cercospora_leaf_spot,
+ healthy,
+ nutrient_deficiency,
+ powdery_mildew]
+
+B+C->A:
+5 classes
+[bacterial_spot,
+ cercospora_leaf_spot,
+ curl_virus,
+ healthy,
+ nutrient_deficiency]
+
+All reported:
+exact_target_overlap_removed = 0
+
+The user subsequently ran the recommended scripts and reported that they
+worked well.
+
+
+============================================================
+27. RECOMMENDED RUN ORDER
+============================================================
+
+Canonical execution order:
+
+1. Download archives to data/zip/
+2. Run extraction.
+3. Diagnose Dataset C.
+4. Repair Dataset C if needed.
+5. Diagnose Dataset C again.
+6. Rebuild harmonized index.
+7. Verify expected class intersections.
+8. Dry-run baselines.
+9. Dry-run proposed model.
+10. Pilot one real experiment.
+11. Run pairwise baselines.
+12. Run pairwise proposed model.
+13. Run multi-source baselines.
+14. Run multi-source proposed model.
+15. Run within-CV baselines.
+16. Run within-CV proposed model.
+17. Run pooled-CV baselines.
+18. Run pooled-CV proposed model.
+19. Run final repeated seeds for external experiments.
+20. Run statistical analysis.
+21. Run result-analysis notebook.
+22. Populate manuscript tables/figures.
+23. Interpret results carefully using the rules in this file.
+
+
+============================================================
+28. IMPORTANT COMMAND SEMANTICS
+============================================================
+
+Example:
+
+python3 run_baselines.py --experiment pooled_cv
+
+runs only pooled CV.
+
+It does NOT run:
+- within_cv
+- pairwise
+- multisource
+
+To run all baseline experiment families:
+
+python3 run_baselines.py --experiment all
+
+However, separate execution by experiment family is recommended for easier
+monitoring and troubleshooting.
+
+
+============================================================
+29. FUTURE ABLATION PLAN FOR THE PROPOSED MODEL
+============================================================
+
+Once the proposed architecture is stable, recommended ablations include:
+
+A0:
+MobileNetV3-Small baseline.
+
+A1:
+Backbone + multi-scale taps only.
+
+A2:
+A1 + 1x1 projections.
+
+A3:
+A2 + ECA recalibration.
+
+A4:
+A2 + adaptive gated fusion, without ECA.
+
+A5:
+A2 + ECA + simple average fusion.
+
+A6:
+Full model:
+multi-scale projections + ECA + adaptive softmax gating +
+depthwise-separable refinement.
+
+Potential questions:
+- Does gating improve external Macro-F1?
+- Does ECA improve robustness?
+- Does multi-scale fusion reduce generalization gap?
+- Are gains worth the parameter increase?
+
+Do not run a huge ablation grid before the final architecture is stable.
+
+
+============================================================
+30. HOW ANOTHER LLM SHOULD HELP
+============================================================
+
+When assisting with this project, another LLM should:
+
+1. Read this entire file first.
+2. Ask for actual result files before making numerical claims.
+3. Distinguish confirmed results from planned experiments.
+4. Preserve the 5/3/4 pairwise class protocol.
+5. Preserve the 6/4/5 multi-source protocol.
+6. Remember that A+C->B is the headline six-class held-out target scenario.
+7. Remember class-source confounding in A+C->B.
+8. Use Macro-F1 and MCC as primary robustness metrics.
+9. Use Holm-adjusted p-values for multiple comparisons.
+10. Avoid treating pooled CV as external validation.
+11. Avoid claiming SOTA across incomparable datasets.
+12. Avoid inventing Dataset C counts.
+13. Use final manifests/results as source of truth.
+14. Consider both predictive performance and efficiency.
+15. Analyze transfer-direction asymmetry.
+16. Interpret statistical and practical significance separately.
+
+
+============================================================
+31. FILES TO REQUEST AFTER EXPERIMENTS FINISH
+============================================================
+
+For reliable final analysis, ask the user to provide:
+
+A. Global summary:
+- results/summary.csv
+
+B. Statistical outputs:
+- results/statistics/<experiment>/friedman_tests.csv
+- average_ranks.csv
+- pairwise_wilcoxon_holm.csv
+- McNemar CSVs
+- paired-bootstrap CSVs
+
+C. Per-run outputs for key scenarios:
+- predictions.csv
+- confusion_matrix.csv
+- per_class_metrics.csv
+- history.csv
+- metrics.json
+
+D. Data audit:
+- dataset_class_counts.csv
+- dataset_class_matrix.csv
+- data_quality_summary.csv
+- conflicting_duplicate_labels.csv
+- removed_exact_duplicates.csv
+
+E. Final configuration:
+- config.yaml
+
+F. Environment:
+- Python version
+- PyTorch version
+- torchvision version
+- CUDA version
+- GPU model
+
+
+============================================================
+32. CURRENT STATUS AT TIME OF THIS CONTEXT FILE
+============================================================
+
+Confirmed:
+- Three public datasets selected.
+- Dataset A, B, C organized under stable IDs.
+- Dataset C broken extraction was diagnosed.
+- Dataset C repair workflow was created.
+- Dataset C participates in final dry-run protocols.
+- Six-class harmonized vocabulary defined.
+- "cerocospora" alias issue fixed.
+- Fixed data pipeline handles zero-byte files and conflicting duplicates.
+- 14 files from 5 conflicting exact-duplicate groups were excluded in one
+  observed audit.
+- Pairwise 5/3/4 class protocol confirmed.
+- Multi-source 6/4/5 class protocol confirmed.
+- Exact source-target overlap count was 0 in confirmed dry runs.
+- Seven default baselines configured.
+- Proposed ChilliLite-GFNet prototype implemented.
+- Shared fair training engine implemented.
+- Per-run history, predictions, confusion matrices, per-class metrics, split
+  manifests, checkpoints, and metrics are recorded.
+- Statistical analysis script implemented.
+- Result-analysis Jupyter notebook implemented.
+- Manuscript draft created.
+- README execution guide revised for Ubuntu and Windows.
+- User reported recommended scripts work well.
+
+Not yet confirmed in this context file:
+- final complete experimental results;
+- final Dataset C exact class counts;
+- final winning baseline;
+- final proposed-model superiority;
+- statistical significance outcomes;
+- final ablation results;
+- final near-duplicate audit;
+- final manuscript conclusions.
+
+Therefore:
+DO NOT INVENT OR ASSUME THESE OUTCOMES.
+
+
+============================================================
+END OF PROJECT CONTEXT
+============================================================

@@ -1,0 +1,212 @@
+# Shared configuration for BOTH baseline and proposed-model experiments.
+# Keeping one config and one training engine is the main fairness mechanism.
+
+project:
+  name: chilli_cross_dataset
+  output_dir: ./results
+  index_csv: ./data/manifests/training_index.csv
+  scan_log_dir: ./data/manifests
+
+runtime:
+  device: auto              # auto | cuda | cpu | mps
+  deterministic: false      # true is more reproducible but can be slower
+  cudnn_benchmark: true
+  num_workers: 4
+  pin_memory: true
+  persistent_workers: true
+
+data:
+  raw_dir: ./data/raw
+  image_size: 224
+
+  # These terms are excluded globally from training.
+  # This is important because Dataset A contains repository-provided augmented data.
+  exclude_any:
+    - augmented
+    - augmentation
+    - __macosx
+
+  # Stable IDs must match extract_data.py output.
+  datasets:
+    A:
+      name: dataset_A_bangladesh
+      root: dataset_A_bangladesh
+      include_any: []
+      exclude_any: []
+
+    B:
+      name: dataset_B_field8814
+      root: dataset_B_field8814
+      include_any: []
+      exclude_any: []
+
+    C:
+      name: dataset_C_cold_india
+      root: dataset_C_cold_india
+
+      # Dataset C may contain multiple derived archives such as cropped,
+      # cropped_resized, and resized_raw images. Restricting to the raw-image
+      # representation avoids counting several derived copies as independent.
+      # If inspection shows a different real folder name, edit this list.
+      include_any:
+        - resized raw images
+      exclude_any:
+        - augmented
+        - cropped resized
+
+  # Primary six-class harmonized benchmark.
+  canonical_labels:
+    - bacterial_spot
+    - cercospora_leaf_spot
+    - curl_virus
+    - healthy
+    - nutrient_deficiency
+    - powdery_mildew
+
+  # Aliases are matched against normalized full relative image paths.
+  # Add aliases after inspecting the actual extracted folder names.
+  label_aliases:
+    bacterial_spot:
+      - bacterial spot
+      - bacterial leaf spot
+      - bacterial
+
+    cercospora_leaf_spot:
+      - cercospora leaf spot
+      - cercospora
+      - cerocospora
+
+    curl_virus:
+      - curl virus
+      - leaf curl virus
+      - chilli leaf curl
+      - chili leaf curl
+      - leaf curl
+
+    healthy:
+      - healthy leaves
+      - healthy leaf
+      - healthy
+      - fresh leaf
+
+    nutrient_deficiency:
+      - nutrient deficiency
+      - nutrition deficiency
+      - nutritional deficiency
+
+    powdery_mildew:
+      - powdery mildew
+
+  # Exact byte-identical duplicates inside a dataset are reduced to one image.
+  # Exact overlap between source and target is removed automatically for
+  # cross-dataset experiments.
+  drop_exact_duplicates_within_dataset: true
+
+augmentation:
+  train:
+    random_resized_crop_scale: [0.80, 1.00]
+    horizontal_flip_p: 0.50
+    rotation_degrees: 10
+    color_jitter:
+      brightness: 0.15
+      contrast: 0.15
+      saturation: 0.10
+      hue: 0.02
+  eval_resize_ratio: 1.142857   # 256 / 224
+
+training:
+  # All models use exactly these settings unless explicitly changed here.
+  epochs: 40
+  batch_size: 32
+  optimizer: adamw
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  betas: [0.9, 0.999]
+
+  scheduler: cosine
+  warmup_epochs: 3
+  min_learning_rate: 0.000001
+
+  loss: cross_entropy
+  label_smoothing: 0.10
+  class_weighting: balanced    # balanced | none
+
+  early_stopping:
+    monitor: macro_f1
+    mode: max
+    patience: 8
+    min_delta: 0.0001
+
+  amp: true
+  grad_clip_norm: 1.0
+
+  # All torchvision baselines and the proposed MobileNetV3-derived model
+  # can use ImageNet-1K initialization under the same setting.
+  pretrained: true
+
+experiments:
+  within_cv:
+    enabled: true
+    n_splits: 5
+    inner_val_fraction: 0.10
+    datasets: [A, B, C]
+    seed: 42
+
+  pairwise:
+    enabled: true
+    inner_val_fraction: 0.10
+    # One seed is a practical default. For final key comparisons, change to
+    # [42, 52, 62] without changing any other parameter.
+    seeds: [42]
+    pairs:
+      - [A, B]
+      - [B, A]
+      - [A, C]
+      - [C, A]
+      - [B, C]
+      - [C, B]
+
+  multisource:
+    enabled: true
+    inner_val_fraction: 0.10
+    seeds: [42]
+    scenarios:
+      - sources: [A, C]
+        target: B
+      - sources: [A, B]
+        target: C
+      - sources: [B, C]
+        target: A
+
+  pooled_cv:
+    enabled: true
+    n_splits: 5
+    inner_val_fraction: 0.10
+    datasets: [A, B, C]
+    seed: 42
+
+baselines:
+  models:
+    - mobilenet_v2
+    - mobilenet_v3_small
+    - shufflenet_v2_x1_0
+    - efficientnet_b0
+    - resnet50
+    - densenet121
+    - swin_t
+
+  optional_models:
+    - efficientnet_b4
+
+proposed:
+  name: chilli_lite_gfnet
+
+  # Easy-to-modify gated multi-scale fusion head on a MobileNetV3-Small
+  # feature extractor. These values are isolated here for ablations.
+  tap_indices: [3, 8, 12]
+  tap_channels: [24, 48, 576]
+  projection_channels: 96
+  fusion_channels: 160
+  gate_hidden_channels: 64
+  dropout: 0.20
+  eca_kernel_size: 3

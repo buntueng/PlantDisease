@@ -1,0 +1,10 @@
+# Install PyTorch/torchvision with the build appropriate for your CPU/CUDA first:
+# https://pytorch.org/get-started/locally/
+torch>=2.3
+torchvision>=0.18
+numpy>=1.26
+pandas>=2.1
+scikit-learn>=1.3
+Pillow>=10.0
+PyYAML>=6.0
+scipy>=1.11
