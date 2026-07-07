@@ -1,0 +1,4 @@
+scenario,best_model,test_macro_f1_mean,test_macro_f1_std,runs
+A+B->C,Swin-Tiny,0.5091437594781755,,1
+A+C->B,ResNet50,0.6247777640777215,,1
+B+C->A,DenseNet121,0.6149308621545236,,1

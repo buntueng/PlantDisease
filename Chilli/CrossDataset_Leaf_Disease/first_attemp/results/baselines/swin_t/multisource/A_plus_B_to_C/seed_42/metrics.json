@@ -1,0 +1,40 @@
+{
+  "family": "baselines",
+  "experiment": "multisource",
+  "scenario": "A+B->C",
+  "source_datasets": [
+    "A",
+    "B"
+  ],
+  "target_dataset": "C",
+  "exact_target_overlap_removed": 0,
+  "model_name": "swin_t",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 4,
+  "label_order": [
+    "cercospora_leaf_spot",
+    "healthy",
+    "nutrient_deficiency",
+    "powdery_mildew"
+  ],
+  "n_train": 5535,
+  "n_val": 616,
+  "n_test": 1657,
+  "parameters": 27522430,
+  "trainable_parameters": 27522430,
+  "best_epoch": 1,
+  "best_val_monitor": 0.9895714421300859,
+  "elapsed_seconds": 244.5243442530009,
+  "peak_gpu_memory_mb": 2829.86669921875,
+  "test_accuracy": 0.5787567893783947,
+  "test_balanced_accuracy": 0.5224986877472759,
+  "test_macro_precision": 0.6524701450864048,
+  "test_macro_recall": 0.5224986877472759,
+  "test_macro_f1": 0.5091437594781755,
+  "test_macro_specificity": 0.8463122605616656,
+  "test_mcc": 0.3859000604330231,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.2978564581045737
+}

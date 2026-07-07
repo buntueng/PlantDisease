@@ -1,0 +1,40 @@
+{
+  "family": "baselines",
+  "experiment": "pairwise",
+  "scenario": "B->A",
+  "source_datasets": [
+    "B"
+  ],
+  "target_dataset": "A",
+  "exact_target_overlap_removed": 0,
+  "model_name": "mobilenet_v2",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 5,
+  "label_order": [
+    "bacterial_spot",
+    "cercospora_leaf_spot",
+    "curl_virus",
+    "healthy",
+    "nutrient_deficiency"
+  ],
+  "n_train": 6383,
+  "n_val": 710,
+  "n_test": 1647,
+  "parameters": 2230277,
+  "trainable_parameters": 2230277,
+  "best_epoch": 13,
+  "best_val_monitor": 0.9889324966546289,
+  "elapsed_seconds": 937.6903681270014,
+  "peak_gpu_memory_mb": 1274.3779296875,
+  "test_accuracy": 0.5689131754705525,
+  "test_balanced_accuracy": 0.5563909557478265,
+  "test_macro_precision": 0.5688578987983683,
+  "test_macro_recall": 0.5563909557478265,
+  "test_macro_f1": 0.5340148297777982,
+  "test_macro_specificity": 0.8924981254468569,
+  "test_mcc": 0.4575699354660222,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.2198976880082717
+}

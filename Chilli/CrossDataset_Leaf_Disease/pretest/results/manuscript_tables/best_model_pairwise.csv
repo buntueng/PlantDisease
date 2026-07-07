@@ -1,0 +1,7 @@
+scenario,best_model,test_macro_f1_mean,test_macro_f1_std,runs
+A->B,Swin-Tiny,0.5167428501224353,,1
+A->C,Swin-Tiny,0.5070776495822763,,1
+B->A,EfficientNet-B4,0.6954266824041916,,1
+B->C,ChilliLite-GFNet,0.4051176239187532,,1
+C->A,EfficientNet-B4,0.7841418765336298,,1
+C->B,EfficientNet-B4,0.6312519937017186,,1

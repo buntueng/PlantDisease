@@ -1,0 +1,7 @@
+,bacterial_spot,cercospora_leaf_spot,curl_virus,healthy,nutrient_deficiency,powdery_mildew
+bacterial_spot,272,0,5,0,1,0
+cercospora_leaf_spot,0,349,7,3,1,0
+curl_virus,4,3,271,4,1,0
+healthy,0,0,0,282,0,0
+nutrient_deficiency,0,0,0,1,218,0
+powdery_mildew,0,0,0,0,0,165

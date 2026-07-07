@@ -1,0 +1,43 @@
+{
+  "family": "baselines",
+  "experiment": "pooled_cv",
+  "scenario": "A+B+C_pooled",
+  "datasets": [
+    "A",
+    "B",
+    "C"
+  ],
+  "fold": 4,
+  "n_splits": 5,
+  "model_name": "densenet121",
+  "seed": 45,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 6,
+  "label_order": [
+    "bacterial_spot",
+    "cercospora_leaf_spot",
+    "curl_virus",
+    "healthy",
+    "nutrient_deficiency",
+    "powdery_mildew"
+  ],
+  "n_train": 8092,
+  "n_val": 900,
+  "n_test": 2248,
+  "parameters": 6960006,
+  "trainable_parameters": 6960006,
+  "best_epoch": 13,
+  "best_val_monitor": 0.9707542098144275,
+  "elapsed_seconds": 935.232730239004,
+  "peak_gpu_memory_mb": 2200.974609375,
+  "test_accuracy": 0.9532918149466192,
+  "test_balanced_accuracy": 0.9592429771215719,
+  "test_macro_precision": 0.9604278252128909,
+  "test_macro_recall": 0.9592429771215719,
+  "test_macro_f1": 0.959502173776421,
+  "test_macro_specificity": 0.9902720230917019,
+  "test_mcc": 0.9430872684277759,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 0.5856535934226613
+}

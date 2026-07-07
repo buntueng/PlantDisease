@@ -1,0 +1,10 @@
+split,class_name,count
+train,cercospora_leaf_spot,818
+train,healthy,293
+train,nutrient_deficiency,234
+validation,cercospora_leaf_spot,81
+validation,healthy,36
+validation,nutrient_deficiency,33
+test,cercospora_leaf_spot,175
+test,healthy,458
+test,nutrient_deficiency,444

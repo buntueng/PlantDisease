@@ -1,0 +1,38 @@
+{
+  "family": "baselines",
+  "experiment": "pairwise",
+  "scenario": "A->C",
+  "source_datasets": [
+    "A"
+  ],
+  "target_dataset": "C",
+  "exact_target_overlap_removed": 0,
+  "model_name": "resnet50",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 3,
+  "label_order": [
+    "cercospora_leaf_spot",
+    "healthy",
+    "nutrient_deficiency"
+  ],
+  "n_train": 969,
+  "n_val": 108,
+  "n_test": 1495,
+  "parameters": 23514179,
+  "trainable_parameters": 23514179,
+  "best_epoch": 1,
+  "best_val_monitor": 1.0,
+  "elapsed_seconds": 37.92519811600141,
+  "peak_gpu_memory_mb": 1789.00048828125,
+  "test_accuracy": 0.5264214046822743,
+  "test_balanced_accuracy": 0.3702957535334839,
+  "test_macro_precision": 0.41271852050783425,
+  "test_macro_recall": 0.3702957535334839,
+  "test_macro_f1": 0.3697641064276249,
+  "test_macro_specificity": 0.6836194897119984,
+  "test_mcc": 0.06013613988184783,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.1688013666487755
+}

@@ -1,0 +1,39 @@
+{
+  "family": "baselines",
+  "experiment": "pairwise",
+  "scenario": "B->C",
+  "source_datasets": [
+    "B"
+  ],
+  "target_dataset": "C",
+  "exact_target_overlap_removed": 0,
+  "model_name": "efficientnet_b4",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 4,
+  "label_order": [
+    "cercospora_leaf_spot",
+    "healthy",
+    "nutrient_deficiency",
+    "powdery_mildew"
+  ],
+  "n_train": 4566,
+  "n_val": 508,
+  "n_test": 1657,
+  "parameters": 17555788,
+  "trainable_parameters": 17555788,
+  "best_epoch": 24,
+  "best_val_monitor": 0.9964099405332238,
+  "elapsed_seconds": 969.7967841130012,
+  "peak_gpu_memory_mb": 3780.857421875,
+  "test_accuracy": 0.5419432709716355,
+  "test_balanced_accuracy": 0.37057430524772694,
+  "test_macro_precision": 0.5158930214723175,
+  "test_macro_recall": 0.37057430524772694,
+  "test_macro_f1": 0.3943631251010418,
+  "test_macro_specificity": 0.778873154321776,
+  "test_mcc": 0.16472273873123705,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.412340914973846
+}

@@ -1,0 +1,18 @@
+{
+  "class_to_idx": {
+    "bacterial_spot": 0,
+    "cercospora_leaf_spot": 1,
+    "curl_virus": 2,
+    "healthy": 3,
+    "nutrient_deficiency": 4,
+    "powdery_mildew": 5
+  },
+  "label_order": [
+    "bacterial_spot",
+    "cercospora_leaf_spot",
+    "curl_virus",
+    "healthy",
+    "nutrient_deficiency",
+    "powdery_mildew"
+  ]
+}

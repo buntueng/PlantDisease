@@ -1,0 +1,5 @@
+,cercospora_leaf_spot,healthy,nutrient_deficiency,powdery_mildew
+cercospora_leaf_spot,150,16,7,2
+healthy,6,64,0,1
+nutrient_deficiency,10,3,39,0
+powdery_mildew,1,0,0,32

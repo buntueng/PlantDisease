@@ -1,0 +1,6 @@
+,bacterial_spot,cercospora_leaf_spot,curl_virus,healthy,nutrient_deficiency
+bacterial_spot,1086,51,8,125,10
+cercospora_leaf_spot,561,376,0,742,4
+curl_virus,278,54,17,1227,6
+healthy,486,16,0,979,0
+nutrient_deficiency,710,42,1,279,35

@@ -1,0 +1,4 @@
+scenario,best_model,test_macro_f1_mean,test_macro_f1_std,runs
+A_within,ChilliLite-GFNet,0.993742560218907,0.006707127579052862,5
+B_within,EfficientNet-B0,0.9861893134312366,0.0020568438735462137,5
+C_within,EfficientNet-B0,0.8404876094347908,0.018260477496038874,5

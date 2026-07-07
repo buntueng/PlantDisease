@@ -1,0 +1,43 @@
+{
+  "family": "proposed",
+  "experiment": "pooled_cv",
+  "scenario": "A+B+C_pooled",
+  "datasets": [
+    "A",
+    "B",
+    "C"
+  ],
+  "fold": 5,
+  "n_splits": 5,
+  "model_name": "chilli_lite_gfnet",
+  "seed": 46,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 6,
+  "label_order": [
+    "bacterial_spot",
+    "cercospora_leaf_spot",
+    "curl_virus",
+    "healthy",
+    "nutrient_deficiency",
+    "powdery_mildew"
+  ],
+  "n_train": 8093,
+  "n_val": 899,
+  "n_test": 2248,
+  "parameters": 1026197,
+  "trainable_parameters": 1026197,
+  "best_epoch": 11,
+  "best_val_monitor": 0.954705805153369,
+  "elapsed_seconds": 872.7848486639996,
+  "peak_gpu_memory_mb": 335.95947265625,
+  "test_accuracy": 0.9568505338078291,
+  "test_balanced_accuracy": 0.9635251925793983,
+  "test_macro_precision": 0.9625236165500105,
+  "test_macro_recall": 0.9635251925793983,
+  "test_macro_f1": 0.9627539285836,
+  "test_macro_specificity": 0.9910317871880308,
+  "test_mcc": 0.9474799298946365,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 0.5847633397075492
+}

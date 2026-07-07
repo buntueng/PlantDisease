@@ -1,0 +1,21 @@
+Fix applied to proposed_model.py
+================================
+
+Problem
+-------
+MixStyle created torch.distributions.Beta concentration parameters with
+`dtype=x.dtype`. During AMP training, x can be float16. Beta sampling then
+fails in environments where the underlying Dirichlet sampler does not support
+Half/BFloat16.
+
+Fix
+---
+Sample Beta coefficients in torch.float32 on the same device, then cast the
+sampled lambda tensor back to x.dtype before feature mixing.
+
+Validation performed
+--------------------
+1. Python compilation for all main scripts.
+2. MixStyle forward with float16, bfloat16, and float32 tensors.
+3. Full ChiliLiteGFNet 224x224 forward and backward pass.
+4. End-to-end one-epoch synthetic fit_and_evaluate smoke test.

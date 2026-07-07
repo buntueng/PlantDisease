@@ -1,0 +1,6 @@
+class_index,class_name,support,precision,recall_sensitivity,specificity,f1,auc_ovr,tp,fp,fn,tn
+0,bacterial_spot,26,1.0,0.9230769230769231,1.0,0.96,0.9853238866396762,24,0,2,304
+1,cercospora_leaf_spot,35,0.9459459459459459,1.0,0.9932203389830508,0.9722222222222222,0.9997094430992736,35,2,0,293
+2,curl_virus,87,1.0,1.0,1.0,1.0,1.0,87,0,0,243
+3,healthy,89,1.0,1.0,1.0,1.0,1.0,89,0,0,241
+4,nutrient_deficiency,93,1.0,1.0,1.0,1.0,1.0,93,0,0,237

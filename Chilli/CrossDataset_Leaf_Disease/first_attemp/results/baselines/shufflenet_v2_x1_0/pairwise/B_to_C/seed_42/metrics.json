@@ -1,0 +1,39 @@
+{
+  "family": "baselines",
+  "experiment": "pairwise",
+  "scenario": "B->C",
+  "source_datasets": [
+    "B"
+  ],
+  "target_dataset": "C",
+  "exact_target_overlap_removed": 0,
+  "model_name": "shufflenet_v2_x1_0",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 4,
+  "label_order": [
+    "cercospora_leaf_spot",
+    "healthy",
+    "nutrient_deficiency",
+    "powdery_mildew"
+  ],
+  "n_train": 4566,
+  "n_val": 508,
+  "n_test": 1657,
+  "parameters": 1257704,
+  "trainable_parameters": 1257704,
+  "best_epoch": 6,
+  "best_val_monitor": 0.9944383285880183,
+  "elapsed_seconds": 429.2469447879994,
+  "peak_gpu_memory_mb": 387.869140625,
+  "test_accuracy": 0.32890766445383224,
+  "test_balanced_accuracy": 0.46905236856107757,
+  "test_macro_precision": 0.48159887006504687,
+  "test_macro_recall": 0.46905236856107757,
+  "test_macro_f1": 0.3356791966653467,
+  "test_macro_specificity": 0.7839229210525054,
+  "test_mcc": 0.19335073703494762,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.7752101232226078
+}

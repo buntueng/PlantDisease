@@ -1,0 +1,40 @@
+{
+  "family": "proposed",
+  "experiment": "pairwise",
+  "scenario": "A->B",
+  "source_datasets": [
+    "A"
+  ],
+  "target_dataset": "B",
+  "exact_target_overlap_removed": 0,
+  "model_name": "chilli_lite_gfnet",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 5,
+  "label_order": [
+    "bacterial_spot",
+    "cercospora_leaf_spot",
+    "curl_virus",
+    "healthy",
+    "nutrient_deficiency"
+  ],
+  "n_train": 1482,
+  "n_val": 165,
+  "n_test": 7093,
+  "parameters": 1026036,
+  "trainable_parameters": 1026036,
+  "best_epoch": 5,
+  "best_val_monitor": 1.0,
+  "elapsed_seconds": 118.00926268100011,
+  "peak_gpu_memory_mb": 329.9248046875,
+  "test_accuracy": 0.42563090370788104,
+  "test_balanced_accuracy": 0.46728716175652574,
+  "test_macro_precision": 0.4976025360580195,
+  "test_macro_recall": 0.46728716175652574,
+  "test_macro_f1": 0.38288844159705493,
+  "test_macro_specificity": 0.8564760604150952,
+  "test_mcc": 0.36190333452483964,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.7407510562522992
+}

@@ -1,0 +1,13 @@
+split,class_name,count
+train,cercospora_leaf_spot,651
+train,healthy,232
+train,nutrient_deficiency,192
+train,powdery_mildew,118
+validation,cercospora_leaf_spot,73
+validation,healthy,26
+validation,nutrient_deficiency,23
+validation,powdery_mildew,11
+test,cercospora_leaf_spot,175
+test,healthy,71
+test,nutrient_deficiency,52
+test,powdery_mildew,33

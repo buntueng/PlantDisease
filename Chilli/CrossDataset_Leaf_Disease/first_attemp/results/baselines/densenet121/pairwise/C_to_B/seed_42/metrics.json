@@ -1,0 +1,39 @@
+{
+  "family": "baselines",
+  "experiment": "pairwise",
+  "scenario": "C->B",
+  "source_datasets": [
+    "C"
+  ],
+  "target_dataset": "B",
+  "exact_target_overlap_removed": 0,
+  "model_name": "densenet121",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 4,
+  "label_order": [
+    "cercospora_leaf_spot",
+    "healthy",
+    "nutrient_deficiency",
+    "powdery_mildew"
+  ],
+  "n_train": 1491,
+  "n_val": 166,
+  "n_test": 5074,
+  "parameters": 6957956,
+  "trainable_parameters": 6957956,
+  "best_epoch": 19,
+  "best_val_monitor": 0.8516780097409731,
+  "elapsed_seconds": 125.35354429600193,
+  "peak_gpu_memory_mb": 2174.869140625,
+  "test_accuracy": 0.5484824595979504,
+  "test_balanced_accuracy": 0.5998354840327104,
+  "test_macro_precision": 0.5440101532710154,
+  "test_macro_recall": 0.5998354840327104,
+  "test_macro_f1": 0.5506364823935521,
+  "test_macro_specificity": 0.8496809813432278,
+  "test_mcc": 0.4115227564602817,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.3443019547552433
+}

@@ -1,0 +1,16 @@
+split,class_name,count
+train,bacterial_spot,107
+train,cercospora_leaf_spot,115
+train,curl_virus,315
+train,healthy,330
+train,nutrient_deficiency,318
+validation,bacterial_spot,12
+validation,cercospora_leaf_spot,21
+validation,curl_virus,27
+validation,healthy,38
+validation,nutrient_deficiency,34
+test,bacterial_spot,28
+test,cercospora_leaf_spot,39
+test,curl_virus,81
+test,healthy,90
+test,nutrient_deficiency,92

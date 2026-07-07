@@ -1,0 +1,12 @@
+{
+  "class_to_idx": {
+    "cercospora_leaf_spot": 0,
+    "healthy": 1,
+    "nutrient_deficiency": 2
+  },
+  "label_order": [
+    "cercospora_leaf_spot",
+    "healthy",
+    "nutrient_deficiency"
+  ]
+}

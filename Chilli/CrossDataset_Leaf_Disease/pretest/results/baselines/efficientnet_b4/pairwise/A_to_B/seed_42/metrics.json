@@ -1,0 +1,40 @@
+{
+  "family": "baselines",
+  "experiment": "pairwise",
+  "scenario": "A->B",
+  "source_datasets": [
+    "A"
+  ],
+  "target_dataset": "B",
+  "exact_target_overlap_removed": 0,
+  "model_name": "efficientnet_b4",
+  "seed": 42,
+  "device": "cuda",
+  "pretrained": true,
+  "num_classes": 5,
+  "label_order": [
+    "bacterial_spot",
+    "cercospora_leaf_spot",
+    "curl_virus",
+    "healthy",
+    "nutrient_deficiency"
+  ],
+  "n_train": 1482,
+  "n_val": 165,
+  "n_test": 7093,
+  "parameters": 17557581,
+  "trainable_parameters": 17557581,
+  "best_epoch": 5,
+  "best_val_monitor": 1.0,
+  "elapsed_seconds": 130.60680532300103,
+  "peak_gpu_memory_mb": 3780.8916015625,
+  "test_accuracy": 0.42986042577188777,
+  "test_balanced_accuracy": 0.45091698199467434,
+  "test_macro_precision": 0.6325318956001412,
+  "test_macro_recall": 0.45091698199467434,
+  "test_macro_f1": 0.35159604870123207,
+  "test_macro_specificity": 0.8586534729169101,
+  "test_mcc": 0.3480697906958557,
+  "test_auc_ovr_macro": NaN,
+  "test_loss": 1.59954368074735
+}
