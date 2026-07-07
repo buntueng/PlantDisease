@@ -1,0 +1,2 @@
+scenario,best_model,test_macro_f1_mean,test_macro_f1_std,runs
+A+B+C_pooled,EfficientNet-B0,0.9688093273304077,0.002721114520304122,5

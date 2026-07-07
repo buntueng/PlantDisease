@@ -29,7 +29,7 @@ def filter_csv_by_family(input_file, output_file, family_to_remove="proposed"):
         print(f"An unexpected error occurred: {e}")
 
 # Run the function on your specific file
-input_filename = 'summary.csv'
-output_filename = 'summary.csv'
+input_filename = 'summary_baseline.csv'
+output_filename = 'summary_baseline.csv'
 
 filter_csv_by_family(input_filename, output_filename)

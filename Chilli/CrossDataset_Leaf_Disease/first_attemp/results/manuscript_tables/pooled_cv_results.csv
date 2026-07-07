@@ -1,0 +1,9 @@
+Scenario,Model,Runs,test_accuracy,test_macro_f1,test_mcc,test_auc_ovr_macro,Parameters (M)
+A+B+C_pooled,ChilliLite-GFNet,5,0.9527 ± 0.0051,0.9569 ± 0.0046,0.9422 ± 0.0062,--,1.15476
+A+B+C_pooled,DenseNet121,5,0.9552 ± 0.0069,0.9599 ± 0.0060,0.9454 ± 0.0084,--,6.960006
+A+B+C_pooled,EfficientNet-B0,5,0.9653 ± 0.0035,0.9688 ± 0.0027,0.9577 ± 0.0043,--,4.015234
+A+B+C_pooled,MobileNetV2,5,0.9590 ± 0.0026,0.9630 ± 0.0017,0.9499 ± 0.0033,--,2.231558
+A+B+C_pooled,MobileNetV3-Small,5,0.9613 ± 0.0015,0.9660 ± 0.0009,0.9527 ± 0.0019,--,1.524006
+A+B+C_pooled,ResNet50,5,0.9556 ± 0.0076,0.9600 ± 0.0064,0.9458 ± 0.0093,--,23.520326
+A+B+C_pooled,ShuffleNetV2,5,0.9551 ± 0.0067,0.9599 ± 0.0056,0.9452 ± 0.0083,--,1.259754
+A+B+C_pooled,Swin-Tiny,5,0.9587 ± 0.0121,0.9633 ± 0.0106,0.9496 ± 0.0148,--,27.523968
