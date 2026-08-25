@@ -1,0 +1,65 @@
+{
+  "MODE": "paper",
+  "INCLUDE_RNND_ZHU": true,
+  "N": 16,
+  "K": 8,
+  "design_ebn0_db": 2.0,
+  "channels": [
+    "AWGN",
+    "Rayleigh",
+    "RicianLOS",
+    "Impulsive"
+  ],
+  "rician_k_db": 6.0,
+  "impulsive_prob": 0.1,
+  "impulsive_power_ratio": 20.0,
+  "equalizer_h_floor": 0.15,
+  "active_regimes": [
+    "mixed",
+    "matched",
+    "unseen"
+  ],
+  "unseen_holdouts": [
+    "Impulsive"
+  ],
+  "batch_size": 64,
+  "learning_rate": 0.001,
+  "decode_loss": "mse",
+  "lambda_denoise": 1.0,
+  "train_snr_min_db": 0.0,
+  "train_snr_max_db": 7.0,
+  "max_epochs": 8000,
+  "eval_every": 200,
+  "val_frames_per_point": 2048,
+  "val_snr_db": [
+    0.0,
+    2.0,
+    4.0,
+    6.0
+  ],
+  "repeats": 5,
+  "seed0": 260816,
+  "test_snr_db": [
+    0.0,
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    6.0,
+    7.0
+  ],
+  "test_batch_size": 4096,
+  "min_test_frames": 10000,
+  "max_test_frames": 100000,
+  "target_bit_errors": 500,
+  "pdf_snr_db": [
+    0.0,
+    3.0,
+    7.0
+  ],
+  "pdf_frames": 20000,
+  "deterministic": true,
+  "weight_init_std": 0.05,
+  "save_optimizer_state": true
+}

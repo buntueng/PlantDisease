@@ -1,0 +1,6 @@
+MIXED: Proposed mean BER=7.950919e-02; best neural baseline=RNND_Zhu with mean BER=9.770670e-02; relative BER reduction=18.62%.
+MATCHED_AWGN: Proposed mean BER=4.785626e-02; best neural baseline=RNND_Zhu with mean BER=4.025511e-02; relative BER reduction=-18.88%.
+MATCHED_Rayleigh: Proposed mean BER=1.039688e-01; best neural baseline=RNND_Zhu with mean BER=1.623253e-01; relative BER reduction=35.95%.
+MATCHED_RicianLOS: Proposed mean BER=6.720022e-02; best neural baseline=RNND_Zhu with mean BER=8.740590e-02; relative BER reduction=23.12%.
+MATCHED_Impulsive: Proposed mean BER=9.229533e-02; best neural baseline=CNN_RNND with mean BER=9.582876e-02; relative BER reduction=3.69%.
+UNSEEN_Impulsive: Proposed mean BER=1.040970e-01; best neural baseline=CNN_RNND with mean BER=1.012367e-01; relative BER reduction=-2.83%.
