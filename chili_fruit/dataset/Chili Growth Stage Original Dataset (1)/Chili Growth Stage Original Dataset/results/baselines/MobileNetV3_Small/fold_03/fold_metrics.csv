@@ -1,0 +1,2 @@
+model,fold,task,best_epoch,best_val_f1,test_loss,n_train_original,n_train_balanced,n_validation,n_test,accuracy,balanced_accuracy,precision_macro,recall_macro,f1_macro,specificity_macro,mcc,auc_ovr_macro
+MobileNetV3_Small,3,five_class,2,1.0,0.4280288780844489,1387,2050,155,172,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0

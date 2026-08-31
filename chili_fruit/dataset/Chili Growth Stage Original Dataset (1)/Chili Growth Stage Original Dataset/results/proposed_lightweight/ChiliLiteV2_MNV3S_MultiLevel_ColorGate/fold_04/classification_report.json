@@ -1,0 +1,45 @@
+{
+  "Dry Chili": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 41.0
+  },
+  "Flower": {
+    "precision": 0.975609756097561,
+    "recall": 1.0,
+    "f1-score": 0.9876543209876543,
+    "support": 40.0
+  },
+  "Green Chili": {
+    "precision": 1.0,
+    "recall": 0.9696969696969697,
+    "f1-score": 0.9846153846153847,
+    "support": 33.0
+  },
+  "Red Chili": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 20.0
+  },
+  "Rotten Chili": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 38.0
+  },
+  "accuracy": 0.9941860465116279,
+  "macro avg": {
+    "precision": 0.9951219512195122,
+    "recall": 0.9939393939393939,
+    "f1-score": 0.9944539411206078,
+    "support": 172.0
+  },
+  "weighted avg": {
+    "precision": 0.9943278502552467,
+    "recall": 0.9941860465116279,
+    "f1-score": 0.9941772123942667,
+    "support": 172.0
+  }
+}

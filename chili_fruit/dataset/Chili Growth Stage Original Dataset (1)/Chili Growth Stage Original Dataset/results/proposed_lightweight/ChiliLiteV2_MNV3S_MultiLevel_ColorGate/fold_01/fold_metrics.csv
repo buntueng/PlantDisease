@@ -1,0 +1,2 @@
+model,fold,best_epoch,best_val_f1,test_loss,n_train_original,n_train_balanced,n_validation,n_test,accuracy,balanced_accuracy,precision_macro,recall_macro,f1_macro,specificity_macro,mcc,auc_ovr_macro
+ChiliLiteV2_MNV3S_MultiLevel_ColorGate,1,2,1.0,0.4088808672372685,1387,2050,155,172,0.9883720930232558,0.9878787878787879,0.9904761904761905,0.9878787878787879,0.9888719512195122,0.9969696969696968,0.9854405120034545,1.0

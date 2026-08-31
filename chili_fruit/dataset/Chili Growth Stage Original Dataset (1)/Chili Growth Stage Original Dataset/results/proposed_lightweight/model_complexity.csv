@@ -1,0 +1,2 @@
+model,total_parameters,trainable_parameters,flops_per_image,latency_ms_batch1,latency_device
+ChiliLiteV2_MNV3S_MultiLevel_ColorGate,1227759,1227759,62615384.0,,cuda

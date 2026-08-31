@@ -1,0 +1,7 @@
+model,first_epoch,last_epoch,epochs,n_folds
+EfficientNet-B0,1,8,8,10
+MobileNetV3-Small,1,9,9,10
+Proposed,1,9,9,10
+ResNet18,1,8,8,10
+ShuffleNetV2-×0.5,1,9,9,10
+SqueezeNet1.1,1,9,9,10

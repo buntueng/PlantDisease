@@ -1,0 +1,19 @@
+{
+  "dataset_root": "/home/bt/Documents/Po/chili_fruit/dataset/Chili Growth Stage Original Dataset (1)/Chili Growth Stage Original Dataset",
+  "manifest": "/home/bt/Documents/Po/chili_fruit/dataset/Chili Growth Stage Original Dataset (1)/Chili Growth Stage Original Dataset/data/chili_growth_stage/dataset_manifest.csv",
+  "class_to_id": {
+    "Dry Chili": 0,
+    "Flower": 1,
+    "Green Chili": 2,
+    "Red Chili": 3,
+    "Rotten Chili": 4
+  },
+  "counts": {
+    "Dry Chili": 410,
+    "Flower": 397,
+    "Green Chili": 328,
+    "Red Chili": 200,
+    "Rotten Chili": 379
+  },
+  "total_images": 1714
+}

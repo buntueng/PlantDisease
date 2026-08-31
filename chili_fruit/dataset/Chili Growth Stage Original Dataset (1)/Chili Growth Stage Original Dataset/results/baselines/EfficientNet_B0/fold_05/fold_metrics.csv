@@ -1,0 +1,2 @@
+model,fold,task,best_epoch,best_val_f1,test_loss,n_train_original,n_train_balanced,n_validation,n_test,accuracy,balanced_accuracy,precision_macro,recall_macro,f1_macro,specificity_macro,mcc,auc_ovr_macro
+EfficientNet_B0,5,five_class,2,1.0,0.4093186761203565,1388,2050,155,171,0.9941520467836257,0.9939393939393939,0.9947368421052631,0.9939393939393939,0.9942564102564102,0.9985074626865671,0.9926397600213233,1.0

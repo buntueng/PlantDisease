@@ -1,0 +1,19 @@
+{
+  "model": "EfficientNet_B0",
+  "fold": 5,
+  "task": "five_class",
+  "before": {
+    "Dry Chili": 332,
+    "Flower": 321,
+    "Green Chili": 265,
+    "Red Chili": 162,
+    "Rotten Chili": 308
+  },
+  "after": {
+    "Dry Chili": 410,
+    "Flower": 410,
+    "Green Chili": 410,
+    "Red Chili": 410,
+    "Rotten Chili": 410
+  }
+}

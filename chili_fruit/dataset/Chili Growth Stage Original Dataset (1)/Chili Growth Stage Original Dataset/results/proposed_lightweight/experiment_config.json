@@ -1,0 +1,18 @@
+{
+  "manifest": "/home/bt/Documents/Po/chili_fruit/dataset/Chili Growth Stage Original Dataset (1)/Chili Growth Stage Original Dataset/data/chili_growth_stage/dataset_manifest.csv",
+  "output_dir": "/home/bt/Documents/Po/chili_fruit/dataset/Chili Growth Stage Original Dataset (1)/Chili Growth Stage Original Dataset/results/proposed_lightweight",
+  "image_size": 224,
+  "target_per_class": 410,
+  "folds": 10,
+  "epochs": 45,
+  "batch_size": 32,
+  "num_workers": 0,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.0001,
+  "val_fraction": 0.1,
+  "patience": 7,
+  "seed": 42,
+  "pretrained": true,
+  "device": "auto",
+  "measure_latency": false
+}
